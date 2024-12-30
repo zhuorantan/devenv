@@ -1,7 +1,8 @@
 #!/bin/bash
 
-docker build -t devenv ./
+docker pull ghcr.io/zhuorantan/devenv
 
-docker run --name devenv -u 0:0 -e PUID=$(id -u) -e PGID=$(id -g) --entrypoint /setup_user devenv
-docker commit devenv devenv
-docker container rm devenv
+docker run --name zt-devenv -u 0:0 -e PUID=$(id -u) -e PGID=$(id -g) --entrypoint /setup_user zhuorantan/devenv
+docker run --name zt-devenv -u $(id -u):$(id -g) --entrypoint zsh zhuorantan/devenv -c 'nvim --headless "+Lazy! sync" +qa'
+docker commit zt-devenv zhuorantan/devenv
+docker container rm zt-devenv

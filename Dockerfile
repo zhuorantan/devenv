@@ -55,7 +55,6 @@ sed -i 's/-b v2.1.3 //' ./Makefile
 make ohmyzsh
 make tmux
 make link
-nvim --headless "+Lazy! sync" +qa
 
 mkdir workspaces
 EOF

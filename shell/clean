@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker image rm devenv
+docker image rm zhuorantan/devenv
