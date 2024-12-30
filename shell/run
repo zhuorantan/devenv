@@ -2,4 +2,4 @@
 
 WORKSPACE="/home/ubuntu/workspaces/$(basename ${PWD})"
 
-docker run --rm --name zt-devenv --hostname devenv -u $(id -u):$(id -g) -v ${PWD}:${WORKSPACE} -w ${WORKSPACE} -it --entrypoint zsh zhuorantan/devenv
+docker run --rm --name zt-devenv --hostname devenv -u $(id -u):$(id -g) -v ${PWD}:${WORKSPACE} -w ${WORKSPACE} -it --entrypoint zsh ghcr.io/zhuorantan/devenv

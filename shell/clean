@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker image rm zhuorantan/devenv
+docker image rm ghcr.io/zhuorantan/devenv
