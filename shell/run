@@ -1,0 +1,5 @@
+#!/bin/bash
+
+WORKSPACE="/home/ubuntu/workspaces/$(basename ${PWD})"
+
+docker run --rm --name devenv --hostname devenv -u $(id -u):$(id -g) -v ${PWD}:${WORKSPACE} -w ${WORKSPACE} -it --entrypoint zsh devenv

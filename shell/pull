@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker build -t devenv ./
+
+docker run --name devenv -u 0:0 -e PUID=$(id -u) -e PGID=$(id -g) --entrypoint /setup_user devenv
+docker commit devenv devenv
+docker container rm devenv
