@@ -26,6 +26,7 @@ RUN <<EOF
 apt-get update
 apt-get -y install curl git unzip zsh tmux fzf ripgrep fd-find nmap zsh-autosuggestions zsh-syntax-highlighting nodejs npm ruby python3
 npm install -g tree-sitter-cli
+npm install -g bun
 rm -rf /var/lib/apt/lists/*
 EOF
 
