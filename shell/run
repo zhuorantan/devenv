@@ -1,5 +1,11 @@
 #!/bin/bash
 
+set -e
+
+if ! docker image inspect ghcr.io/zhuorantan/devenv >/dev/null 2>&1; then
+  bash -c "$(curl -L zhuoran.dev/pull)"
+fi
+
 WORKSPACE="/home/ubuntu/workspaces/$(basename ${PWD})"
 
-docker run --rm --name zt-devenv --hostname devenv -u $(id -u):$(id -g) -v ${PWD}:${WORKSPACE} -w ${WORKSPACE} -it --entrypoint zsh ghcr.io/zhuorantan/devenv
+docker run --rm --name zt-devenv --hostname devenv -u $(id -u):$(id -g) -v /etc/localtime:/etc/localtime -v ${PWD}:${WORKSPACE} -w ${WORKSPACE} -it --entrypoint zsh ghcr.io/zhuorantan/devenv
