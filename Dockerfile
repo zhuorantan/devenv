@@ -24,7 +24,7 @@ RUN groupadd -g ${PGID} ubuntu && useradd -lms /bin/zsh -u ${PUID} -g ${PGID} ub
 
 RUN <<EOF
 apt-get update
-apt-get -y install curl git unzip zsh tmux fzf ripgrep fd-find nmap zsh-autosuggestions zsh-syntax-highlighting nodejs npm ruby python3
+apt-get -y install curl git unzip zsh tmux fzf ripgrep fd-find nmap zsh-autosuggestions zsh-syntax-highlighting nodejs npm ruby python3 direnv
 npm install -g tree-sitter-cli
 npm install -g bun
 rm -rf /var/lib/apt/lists/*
