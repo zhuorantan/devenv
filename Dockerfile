@@ -9,7 +9,8 @@ git checkout stable
 make CMAKE_BUILD_TYPE=RelWithDebInfo
 make install
 rm -rf /root/neovim
-apt-get purge -y ninja-build gettext cmake unzip curl build-essential git
+apt-get remove -y ninja-build gettext cmake unzip curl build-essential git
+apt-get autoremove -y
 rm -rf /var/lib/apt/lists/*
 EOF
 
@@ -24,7 +25,7 @@ RUN groupadd -g ${PGID} ubuntu && useradd -lms /bin/zsh -u ${PUID} -g ${PGID} ub
 
 RUN <<EOF
 apt-get update
-apt-get -y install curl git unzip zsh tmux fzf ripgrep fd-find nmap zsh-autosuggestions zsh-syntax-highlighting nodejs npm ruby python3 direnv
+apt-get -y install curl git unzip zsh tmux fzf ripgrep fd-find nmap zsh-autosuggestions zsh-syntax-highlighting nodejs npm ruby ruby-dev python3 python3-venv direnv
 npm install -g tree-sitter-cli
 npm install -g bun
 rm -rf /var/lib/apt/lists/*
