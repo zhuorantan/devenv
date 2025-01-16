@@ -2,10 +2,10 @@
 
 set -e
 
-if ! docker image inspect zt-devenv >/dev/null 2>&1; then
+if ! docker image inspect "devenv-${USER}" >/dev/null 2>&1; then
   bash -c "$(curl -L zhuoran.dev/build)"
 fi
 
 WORKSPACE="/home/ubuntu/workspaces/$(basename ${PWD})"
 
-docker run --rm --name zt-devenv --hostname devenv -v /etc/localtime:/etc/localtime -v ${PWD}:${WORKSPACE} -w ${WORKSPACE} -it zt-devenv
+docker run --rm --name "devenv-${USER}" --hostname devenv -v /etc/localtime:/etc/localtime -v ${PWD}:${WORKSPACE} -w ${WORKSPACE} -it "devenv-${USER}"
