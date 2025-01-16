@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+
+docker build -t zt-devenv --build-arg PUID=$(id -u) --build-arg GUID=$(id -g) github.com/zhuorantan/devenv

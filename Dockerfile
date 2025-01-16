@@ -19,7 +19,7 @@ FROM debian:latest
 ENV TERM=xterm-256color
 ENV SHELL=/bin/zsh
 ENV LANG=en_CA.UTF-8
-ENV PUID=1000 PGID=1000
+ARG PUID=1000 PGID=1000
 
 RUN groupadd -g ${PGID} ubuntu && useradd -lms /bin/zsh -u ${PUID} -g ${PGID} ubuntu
 
@@ -36,9 +36,6 @@ RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /usr/share/
 COPY --from=neovim /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=neovim /usr/local/lib/nvim /usr/local/lib/nvim
 COPY --from=neovim /usr/local/share/nvim /usr/local/share/nvim
-
-COPY ./includes/setup_user.sh /setup_user
-RUN chmod +x /setup_user
 
 USER ubuntu
 
@@ -57,6 +54,8 @@ sed -i 's/-b v2.1.3 //' ./Makefile
 make ohmyzsh
 make tmux
 make link
+
+nvim --headless "+Lazy! sync" "+TSUpdateSync" "+sleep 10" +qa
 
 mkdir workspaces
 EOF
