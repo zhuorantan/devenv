@@ -21,7 +21,15 @@ ENV SHELL=/bin/zsh
 ENV LANG=en_CA.UTF-8
 ARG PUID=1000 PGID=1000
 
-RUN groupadd -g ${PGID} ubuntu && useradd -lms /bin/zsh -u ${PUID} -g ${PGID} ubuntu
+RUN <<EOF
+id -g ${PGID} 2>/dev/null
+[ $? -ne 0 ] && groupadd -g ${PGID} ubuntu
+
+id ${PUID} 2>/dev/null
+[ $? -ne 0 ] && useradd -lm -u ${PUID} -g ${PGID} ubuntu
+
+usermod -aG ${PGID} -s /bin/zsh $(id -nu ${PUID})
+EOF
 
 RUN <<EOF
 apt-get update
@@ -37,11 +45,15 @@ COPY --from=neovim /usr/local/bin/nvim /usr/local/bin/nvim
 COPY --from=neovim /usr/local/lib/nvim /usr/local/lib/nvim
 COPY --from=neovim /usr/local/share/nvim /usr/local/share/nvim
 
-USER ubuntu
-
-WORKDIR /home/ubuntu
+USER ${PUID}
 
 RUN <<EOF
+if [ "${PUID}" -eq "0" ]; then
+  cd /root
+else
+  cd /home/$(id -nu "${PUID}")
+fi
+
 /usr/share/zsh-theme-powerlevel10k/gitstatus/install
 
 git config --global init.defaultBranch main
