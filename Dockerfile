@@ -16,6 +16,20 @@ EOF
 
 FROM debian:latest
 
+COPY --from=neovim /usr/local/bin/nvim /usr/local/bin/nvim
+COPY --from=neovim /usr/local/lib/nvim /usr/local/lib/nvim
+COPY --from=neovim /usr/local/share/nvim /usr/local/share/nvim
+
+RUN <<EOF
+apt-get update
+apt-get -y install curl git unzip zsh tmux fzf ripgrep fd-find nmap zsh-autosuggestions zsh-syntax-highlighting nodejs npm ruby ruby-dev python3 python3-venv direnv
+npm install -g tree-sitter-cli
+npm install -g bun
+rm -rf /var/lib/apt/lists/*
+EOF
+
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /usr/share/zsh-theme-powerlevel10k
+
 ENV TERM=xterm-256color
 ENV SHELL=/bin/zsh
 ENV LANG=en_CA.UTF-8
@@ -30,20 +44,6 @@ id ${PUID} 2>/dev/null
 
 usermod -aG ${PGID} -s /bin/zsh $(id -nu ${PUID})
 EOF
-
-RUN <<EOF
-apt-get update
-apt-get -y install curl git unzip zsh tmux fzf ripgrep fd-find nmap zsh-autosuggestions zsh-syntax-highlighting nodejs npm ruby ruby-dev python3 python3-venv direnv
-npm install -g tree-sitter-cli
-npm install -g bun
-rm -rf /var/lib/apt/lists/*
-EOF
-
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /usr/share/zsh-theme-powerlevel10k
-
-COPY --from=neovim /usr/local/bin/nvim /usr/local/bin/nvim
-COPY --from=neovim /usr/local/lib/nvim /usr/local/lib/nvim
-COPY --from=neovim /usr/local/share/nvim /usr/local/share/nvim
 
 USER ${PUID}
 
