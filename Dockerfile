@@ -25,6 +25,7 @@ RUN if [ "$(uname -m)" = "aarch64" ]; then \
     nodejs \
     npm \
     nmap \
+    openssh \
     python3 \
     ripgrep \
     ruby \

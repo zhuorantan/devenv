@@ -132,4 +132,16 @@ if [[ -S /var/run/docker.sock ]]; then
     args+=(-v /var/run/docker.sock:/var/run/docker.sock)
 fi
 
+if [[ "$(uname -s)" == "Darwin" && -n "${SSH_AUTH_SOCK:-}" ]]; then
+    args+=(
+        -e SSH_AUTH_SOCK=/ssh-agent
+        -v /run/host-services/ssh-auth.sock:/ssh-agent
+    )
+elif [[ -S "${SSH_AUTH_SOCK:-}" ]]; then
+    args+=(
+        -e SSH_AUTH_SOCK=/ssh-agent
+        -v "$SSH_AUTH_SOCK:/ssh-agent"
+    )
+fi
+
 docker run "${args[@]}" "$image" "$@"
