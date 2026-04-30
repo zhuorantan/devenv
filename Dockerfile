@@ -2,11 +2,14 @@ FROM opensuse/tumbleweed:latest
 
 ARG DEVENV_USER=me
 
-RUN zypper --non-interactive addrepo --refresh \
+RUN if [ "$(uname -m)" = "aarch64" ]; then \
+    zypper --non-interactive addrepo \
     http://download.opensuse.org/ports/aarch64/tumbleweed/repo/non-oss/ \
-    repo-non-oss && \
+    repo-non-oss; \
+    fi && \
     zypper --non-interactive refresh && \
     zypper --non-interactive install --no-recommends \
+    bubblewrap \
     docker \
     docker-compose \
     fd \

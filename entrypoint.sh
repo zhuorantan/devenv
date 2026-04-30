@@ -90,4 +90,4 @@ if [[ -S /var/run/docker.sock ]]; then
     usermod --append --groups "$docker_group" "$user"
 fi
 
-exec runuser --user "$user" -- "$@"
+exec su --command "$@" --login "$user"
