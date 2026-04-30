@@ -1,5 +1,0 @@
-#!/bin/bash
-
-set -e
-
-docker build -t "devenv-${USER}" --build-arg PUID=$(id -u) --build-arg GUID=$(id -g) https://github.com/zhuorantan/devenv.git#main

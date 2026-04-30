@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+image="${DEVENV_IMAGE:-devenv}"
+container="${DEVENV_CONTAINER:-devenv}"
+home_volume="${DEVENV_HOME_VOLUME:-${container}-home}"
+build_context="${DEVENV_BUILD_CONTEXT:-https://github.com/zhuorantan/devenv.git}"
+workspace="${PWD}"
+root=0
+action=run
+
+usage() {
+    cat <<EOF
+Usage: $0 [-r|--root] [-w|--workspace DIR] [command...]
+       $0 build [--local]
+       $0 clean
+       $0 reset
+
+Options:
+  --local          Build image from current directory instead of GitHub
+  -r, --root           Run the container command as root
+  -w, --workspace DIR  Host path mounted at /workspace
+
+Environment:
+  DEVENV_IMAGE      Image name to build/run, default: devenv
+  DEVENV_BUILD_CONTEXT Docker build context, default: GitHub repo
+  DEVENV_CONTAINER  Container name, default: devenv
+  DEVENV_HOME_VOLUME Home volume name, default: <container>-home
+EOF
+}
+
+build_image() {
+    docker build -t "$image" "$build_context"
+}
+
+case "${1:-}" in
+build)
+    action=build
+    shift
+    ;;
+clean)
+    docker rm -f "$container" >/dev/null 2>&1 || true
+    exit
+    ;;
+reset)
+    printf 'Delete container %s and home volume %s? [y/N] ' "$container" "$home_volume" >&2
+    read -r answer
+    case "$answer" in
+    y | Y | yes | YES)
+        ;;
+    *)
+        printf 'Reset cancelled.\n' >&2
+        exit
+        ;;
+    esac
+    docker rm -f "$container" >/dev/null 2>&1 || true
+    docker volume rm "$home_volume" >/dev/null 2>&1 || true
+    exit
+    ;;
+-h | --help | help)
+    usage
+    exit
+    ;;
+esac
+
+while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+    --local)
+        if [[ "$action" == "build" ]]; then
+            build_context=.
+            shift
+        else
+            usage >&2
+            exit 2
+        fi
+        ;;
+    -r | --root)
+        root=1
+        shift
+        ;;
+    -w | --workspace)
+        [[ "${2:-}" ]] || {
+            usage >&2
+            exit 2
+        }
+        workspace="$2"
+        shift 2
+        ;;
+    --)
+        shift
+        break
+        ;;
+    -*)
+        usage >&2
+        exit 2
+        ;;
+    *)
+        break
+        ;;
+    esac
+done
+
+if [[ "$action" == "build" ]]; then
+    build_image
+    exit
+fi
+
+if [[ "$#" -eq 0 ]]; then
+    set -- /bin/zsh
+fi
+
+if ! docker image inspect "$image" >/dev/null 2>&1; then
+    build_image
+fi
+
+uid="$(id -u)"
+gid="$(id -g)"
+home_mount=/home/me
+if [[ "$root" == "1" ]]; then
+    uid=0
+    gid=0
+    home_mount=/root
+fi
+
+args=(
+    --name "$container"
+    --rm
+    -it
+    -e "HOST_UID=$uid"
+    -e "HOST_GID=$gid"
+    -v "$home_volume:$home_mount"
+    -v "$workspace:/workspace"
+)
+
+if [[ -S /var/run/docker.sock ]]; then
+    args+=(-v /var/run/docker.sock:/var/run/docker.sock)
+fi
+
+docker run "${args[@]}" "$image" "$@"
