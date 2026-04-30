@@ -46,8 +46,7 @@ reset)
     printf 'Delete container %s and home volume %s? [y/N] ' "$container" "$home_volume" >&2
     read -r answer
     case "$answer" in
-    y | Y | yes | YES)
-        ;;
+    y | Y | yes | YES) ;;
     *)
         printf 'Reset cancelled.\n' >&2
         exit

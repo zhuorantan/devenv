@@ -61,8 +61,13 @@ if [[ -d "$target_home" ]]; then
     fi
 fi
 
+zsh_command=(/bin/zsh -l)
+if [[ "$#" -gt 0 ]]; then
+    zsh_command+=(-c 'exec "$@"' zsh "$@")
+fi
+
 if [[ "$uid" == "0" ]]; then
-    exec "$@"
+    exec "${zsh_command[@]}"
 fi
 
 [[ "$gid" != "0" ]] || die "refusing to remap '$user' to gid 0 with non-root uid $uid"
@@ -90,4 +95,4 @@ if [[ -S /var/run/docker.sock ]]; then
     usermod --append --groups "$docker_group" "$user"
 fi
 
-exec su --command "$@" --login "$user"
+exec runuser --user "$user" -- "${zsh_command[@]}"

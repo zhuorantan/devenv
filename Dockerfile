@@ -16,6 +16,7 @@ RUN if [ "$(uname -m)" = "aarch64" ]; then \
     fzf \
     gcc \
     git \
+    glibc-locale \
     iproute2 \
     less \
     make \
@@ -68,7 +69,8 @@ RUN set -eux; \
     cd dotfiles && \
     make ohmyzsh && \
     make tmux && \
-    make link
+    make link && \
+    echo 'source ~/.zshenv' > ~/.zprofile
 
 USER root
 
@@ -83,6 +85,6 @@ WORKDIR /workspace
 ENV LANG=en_CA.UTF-8
 ENV SHELL=/bin/zsh
 ENV TERM=xterm-256color
+ENV COLORTERM=truecolor
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/bin/zsh"]
