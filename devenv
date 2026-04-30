@@ -126,6 +126,7 @@ args=(
     --name "$container"
     --rm
     -it
+    --detach-keys ctrl-@,ctrl-@
     -e "HOST_UID=$uid"
     -e "HOST_GID=$gid"
     -v "$home_volume:$home_mount"

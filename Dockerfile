@@ -6,15 +6,16 @@ RUN zypper --non-interactive addrepo --refresh \
     http://download.opensuse.org/ports/aarch64/tumbleweed/repo/non-oss/ \
     repo-non-oss && \
     zypper --non-interactive refresh && \
-    zypper --non-interactive install --no-recommends -t pattern devel_basis && \
     zypper --non-interactive install --no-recommends \
     docker \
     docker-compose \
     fd \
     fzf \
+    gcc \
     git \
     iproute2 \
     less \
+    make \
     net-tools \
     neovim \
     nodejs \
@@ -30,7 +31,7 @@ RUN zypper --non-interactive addrepo --refresh \
     which \
     yazi \
     zsh && \
-    npm install -g bun @openai/codex && \
+    npm install -g bun && \
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /usr/share/zsh-theme-powerlevel10k && \
     git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions /usr/share/zsh-autosuggestions && \
     git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git /usr/share/zsh-syntax-highlighting && \
@@ -56,17 +57,15 @@ RUN set -eux; \
 USER ${DEVENV_USER}
 WORKDIR /home/${DEVENV_USER}
 
+ENV BUN_INSTALL="/home/${DEVENV_USER}/.bun"
+
 RUN set -eux; \
+    bun install -g @openai/codex && \
     git clone https://github.com/zhuorantan/dotfiles.git && \
     cd dotfiles && \
     make ohmyzsh && \
     make tmux && \
-    make link && \
-    nvim --headless \
-    --cmd 'lua vim.ui.select = function(_, _, on_choice) on_choice(nil, nil) end' \
-    "+Lazy! sync" \
-    "+sleep 10" \
-    +qa!
+    make link
 
 USER root
 
@@ -79,6 +78,7 @@ COPY entrypoint.sh /
 WORKDIR /workspace
 
 ENV LANG=en_CA.UTF-8
+ENV SHELL=/bin/zsh
 ENV TERM=xterm-256color
 
 ENTRYPOINT ["/entrypoint.sh"]
