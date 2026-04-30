@@ -119,6 +119,7 @@ fi
 
 args=(
     --name "$container"
+    --hostname "$(hostname -s)-devenv"
     --rm
     -it
     --detach-keys ctrl-@,ctrl-@

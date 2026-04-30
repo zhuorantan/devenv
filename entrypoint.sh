@@ -50,6 +50,7 @@ if [[ -d "$target_home" && -d "$home_template" && ! -e "$home_seed_marker" ]]; t
     log "seeding $target_home from image template"
     cp -aT "$home_template" "$target_home"
     touch "$home_seed_marker"
+    chown "$target_uid:$target_gid" "$home_seed_marker"
 fi
 
 if [[ -d "$target_home" ]]; then
