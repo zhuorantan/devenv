@@ -32,6 +32,7 @@ RUN if [ "$(uname -m)" = "aarch64" ]; then \
     ruby-devel \
     sudo \
     terminfo \
+    terminfo-ghostty \
     tmux \
     which \
     yazi \
