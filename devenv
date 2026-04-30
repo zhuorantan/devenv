@@ -123,6 +123,8 @@ args=(
     --rm
     -it
     --detach-keys ctrl-@,ctrl-@
+    --security-opt seccomp=unconfined
+    --security-opt apparmor=unconfined
     -e "HOST_UID=$uid"
     -e "HOST_GID=$gid"
     -v "$home_volume:$home_mount"
